@@ -3,6 +3,5 @@ An implementation of Conway's Game of Life (and potentially other similar cellul
 
 # Controls
 Space - Toggle playback
-n (while paused) - Iterate one step
-r - reset
+
 q - quit
