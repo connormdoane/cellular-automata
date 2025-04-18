@@ -9,7 +9,7 @@ int** init_board() {
 
   board = malloc(w * sizeof(int*));
   for (int i = 0; i < w; i++) {
-    board[i] = calloc(h, h * sizeof(int));
+    board[i] = calloc(h, sizeof(int));
   }
   
   return board;
@@ -57,11 +57,11 @@ int** iterate_gol(int** board) {
   return new_board;
 }
 
-void render_board(P_Window* window, P_Image image, int** board) {
+void render_board(int** board) {
   for (int i = 0; i < w; i++) {
     for (int j = 0; j < h; j++) {
       if (board[i][j]) {
-        P_Set(window, image, i, j, (P_Color){255, 255, 255, 255});
+        P_Set(i, j, (P_Color){255, 255, 255, 255});
       }
     }
   }
@@ -69,9 +69,7 @@ void render_board(P_Window* window, P_Image image, int** board) {
 
 int main()
 {
-  P_Window window;
-
-  P_Image image = P_Create("Smiley", &window, 500, 500, w, h);
+  P_Create("Smiley", 500, 500, w, h);
 
   int** board = init_board();
   setup_board(board);
@@ -79,14 +77,23 @@ int main()
   int play = 1;
   
   while (!P_Done()) {
-    P_Clear(&window, image, (P_Color){0, 0, 0, 255});
+    P_Clear((P_Color){0, 0, 0, 255});
 
-    render_board(&window, image, board);
+    render_board(board);
 
     if (play) {
-      board = iterate_gol(board);
+      int** tmp_board = iterate_gol(board);
+      destroy_board(board);
+      board = tmp_board;
+    } else {
+      if (P_KeyPress(SDL_SCANCODE_N)) {
+        // ITERATE
+        int** tmp_board = iterate_gol(board);
+        destroy_board(board);
+        board = tmp_board;
+      }
     }
-
+      
     // PAUSE
     if (P_KeyPress(SDL_SCANCODE_SPACE)) {
       play = !play;
@@ -97,12 +104,12 @@ int main()
       break;
     }
 
-    P_Update(&window, image);
-    usleep(100000);
+    P_Update();
+    usleep(10000);
   }
 
   destroy_board(board);
-  P_Destroy(&window, image);
+  P_Destroy();
 
   return 0;
 }
