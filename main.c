@@ -69,7 +69,7 @@ void render_board(int** board) {
 
 int main()
 {
-  P_Create("Smiley", 500, 500, w, h);
+  P_Create("Conway's Game of Life", 500, 500, w, h);
 
   int** board = init_board();
   setup_board(board);
